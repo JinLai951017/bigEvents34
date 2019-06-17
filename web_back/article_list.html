@@ -247,7 +247,7 @@
             <td class="text-center">{{v.state}}</td>
             <td class="text-center">
                 <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
-                <a href="javascript:void();" data-id="{{v.id}}" class="btn btn-danger btn-xs">删除</a>
+                <a href="javascript:void();" data-id="{{v.id}}" class="btn btn-danger btn-xs btn-delete">删除</a>
             </td>
         </tr>
         {{/each}}
@@ -269,6 +269,7 @@
             }
         });
          //声明一个变量,用来记录总的页码条.
+         //假设10页
          var mytotalPage = 10;
 
         //帅选文章封装成一个函数
@@ -295,7 +296,7 @@
 
                         //获取分页插件每次重新生成的总页数
                         var totalPages = backData.totalPage;
-                        if (mytotalPage != totalPages) { //如果通过ajax响应回来的数据得到的页面和 刚才的页码不一样
+                        if (mytotalPage != totalPages) { //如果通过ajax响应回来的数据得到的页码总数和 刚才的页码不一样
                             mytotalPage = totalPages;     //那就应该去执行下面的这些代码,重新的生成页码条.
 
                             var currentPage = 1; //当前页
@@ -332,6 +333,22 @@
         $('#btnSearch').on('click', function (e) {
             e.preventDefault();
             getArticle(1);//默认进来显示第一页
+        });
+        //删除文章
+        $('tbody').on('click','a.btn-delete',function(){
+            var that = $(this);
+            var id = $(this).attr('data-id');
+            $.ajax({
+                url:'http://localhost:8000/admin/article_delete',
+                data:{
+                    id:id
+                },
+                success:function(backData){
+                    if(backData.code == 200){
+                        that.parent().parent().remove();
+                    }
+                }
+            });
         });
         //一进入页面,显示所有文章列表
         $('#btnSearch').click();
